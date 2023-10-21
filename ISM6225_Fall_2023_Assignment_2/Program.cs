@@ -6,7 +6,9 @@ WRITE YOUR CODE IN THE RESPECTIVE QUESTION FUNCTION BLOCK
 
 */
 
+using System;
 using System.Text;
+using System.Collections.Generic;
 
 namespace ISM6225_Fall_2023_Assignment_2
 {
@@ -84,16 +86,16 @@ namespace ISM6225_Fall_2023_Assignment_2
 
         /*
         
-        Question 1:
-        You are given an inclusive range [lower, upper] and a sorted unique integer array nums, where all elements are within the inclusive range. A number x is considered missing if x is in the range [lower, upper] and x is not in nums. Return the shortest sorted list of ranges that exactly covers all the missing numbers. That is, no element of nums is included in any of the ranges, and each missing number is covered by one of the ranges.
-        Example 1:
-        Input: nums = [0,1,3,50,75], lower = 0, upper = 99
-        Output: [[2,2],[4,49],[51,74],[76,99]]  
-        Explanation: The ranges are:
-        [2,2]
-        [4,49]
-        [51,74]
-        [76,99]
+			Question 1:
+			You are given an inclusive range [lower, upper] and a sorted unique integer array nums, where all elements are within the inclusive range. A number x is considered missing if x is in the range [lower, upper] and x is not in nums. Return the shortest sorted list of ranges that exactly covers all the missing numbers. That is, no element of nums is included in any of the ranges, and each missing number is covered by one of the ranges.
+			Example 1:
+			Input: nums = [0,1,3,50,75], lower = 0, upper = 99
+			Output: [[2,2],[4,49],[51,74],[76,99]]  
+			Explanation: The ranges are:
+			[2,2]
+			[4,49]
+			[51,74]
+			[76,99]
         Example 2:
         Input: nums = [-1], lower = -1, upper = -1
         Output: []
@@ -108,18 +110,86 @@ namespace ISM6225_Fall_2023_Assignment_2
         Time complexity: O(n), space complexity:O(1)
         */
 
+        /*
+        FindMissingRanges function takes in a sorted integer array (nums), a lower bound (lower), and an upper bound (upper).
+        It returns a list of lists representing the missing ranges within the inclusive range [lower, upper].
+
+        The function works by iterating through the array "nums" and finding the missing ranges between "lower" and the first element of "nums," 
+        and between the last element of "nums" and "upper."
+
+        If the input array "nums" is empty, it simply adds the entire range [lower, upper] as a missing range.
+
+        Time complexity: O(n), where n is the length of the "nums" array.
+        Space complexity: O(1), as the output list "missingRanges" does not grow with the input size.
+        */
+
         public static IList<IList<int>> FindMissingRanges(int[] nums, int lower, int upper)
         {
+            int n = nums.Length;
+            List<IList<int>> ans = new List<IList<int>>();
+
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return new List<IList<int>>();
+                if (n == 0)
+                {
+                    ans.Add(new List<int> { lower, upper });
+                    return ans;
+                }
+
+                if (nums[0] > lower)
+                {
+                    ans.Add(new List<int> { lower, nums[0] - 1 });
+                }
+
+                for (int i = 1; i < n; i++)
+                {
+                    if (nums[i] - nums[i - 1] > 1)
+                    {
+                        ans.Add(new List<int> { nums[i - 1] + 1, nums[i] - 1 });
+                    }
+                }
+
+                if (nums[n - 1] < upper)
+                {
+                    ans.Add(new List<int> { nums[n - 1] + 1, upper });
+                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                Console.WriteLine("An error occurred: " + ex.Message);
             }
 
+            return ans;
+        }
+
+        // Helper function to add a range to the "missingRanges" list
+        private static void AddRange(IList<IList<int>> missingRanges, long start, long end)
+        {
+            if (start > end)
+            {
+                return; // No missing elements in this range
+            }
+
+            if (start == end)
+            {
+                missingRanges.Add(new List<int> { (int)start }); // Single missing element
+            }
+            else
+            {
+                missingRanges.Add(new List<int> { (int)start, (int)end }); // Range of missing elements
+            }
+        }
+
+        // Helper function to print the missing ranges
+        private static void PrintMissingRanges(IList<IList<int>> missingRanges)
+        {
+            foreach (var range in missingRanges)
+            {
+                Console.Write("[");
+                Console.Write(string.Join(",", range));
+                Console.Write("]");
+            }
+            Console.WriteLine();
         }
 
         /*
@@ -156,12 +226,44 @@ namespace ISM6225_Fall_2023_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return s.Length == 0;
+                Stack<char> stk = new Stack<char>();
+
+                foreach (char c in stk)
+                {
+                    if (c == '(' || c == '[' || c == '{')
+                    {
+                        stk.Push(c);
+                    }
+                    else
+                    {
+                        if (stk.Count == 0)
+                        {
+                            return false; // Unmatched closing bracket
+                        }
+
+                        char openBracket = stk.Pop();
+
+                        if (c == ')' && openBracket != '(')
+                        {
+                            return false; // Mismatched parentheses
+                        }
+                        else if (c == ']' && openBracket != '[')
+                        {
+                            return false; // Mismatched square brackets
+                        }
+                        else if (c == '}' && openBracket != '{')
+                        {
+                            return false; // Mismatched curly braces
+                        }
+                    }
+                }
+
+                return stk.Count == 0; // Check if there are any unmatched open brackets left in the stk
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                Console.WriteLine($"An exception occurred: {ex.Message}");
+                return false; // In case of an exception, consider it as invalid parentheses
             }
         }
 
@@ -191,11 +293,31 @@ namespace ISM6225_Fall_2023_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 1;
+                // Check if the input array is null or has fewer than 2 elements.
+                if (prices == null || prices.Length < 2)
+                {
+                    // If there are not enough days to make a profit, return 0.
+                    return 0;
+                }
+
+                // Initialize variables to keep track of minimum price and maximum profit.
+                int mp = prices[0];
+                int maxp = 0;
+
+                // Iterate through the array, updating mp and maxp as necessary.
+                for (int i = 1; i < prices.Length; i++)
+                {
+                    int cp = prices[i];
+                    maxp = Math.Max(maxp, cp - mp);
+                    mp = Math.Min(mp, cp);
+                }
+
+                // Return the maximum profit achieved.
+                return maxp;
             }
             catch (Exception)
             {
+                // Catch any exceptions and rethrow them.
                 throw;
             }
         }
@@ -225,15 +347,41 @@ namespace ISM6225_Fall_2023_Assignment_2
         Time complexity:O(n), space complexity:O(1)
         */
 
-        public static bool IsStrobogrammatic(string s)
+        public static bool IsStrobogrammatic(string stk)
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return false;
-            }
-            catch (Exception)
+                // Define a dictionary to store the valid strobogrammatic pairs
+                Dictionary<char, char> pairs = new Dictionary<char, char>
             {
+                {'0', '0'},
+                {'1', '1'},
+                {'6', '9'},
+                {'8', '8'},
+                {'9', '6'}
+            };
+
+                int left = 0;
+                int right = stk.Length - 1;
+
+                while (left <= right)
+                {
+                    // Check if the characters at the left and right positions are a valid strobogrammatic pair
+                    if (!pairs.ContainsKey(stk[left]) || pairs[stk[left]] != stk[right])
+                    {
+                        return false;
+                    }
+
+                    // Move the pointers inward
+                    left++;
+                    right--;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("An error occurred: " + ex.Message);
                 throw;
             }
         }
@@ -271,8 +419,25 @@ namespace ISM6225_Fall_2023_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 0;
+                // Create a dictionary to store the count of each number
+                Dictionary<int, int> countMap = new Dictionary<int, int>();
+                int gP = 0;
+
+                foreach (int n in nums)
+                {
+                    // If the number exists in the dictionary, increment the count
+                    if (countMap.ContainsKey(n))
+                    {
+                        gP += countMap[n];
+                        countMap[n]++;
+                    }
+                    else
+                    {
+                        countMap[n] = 1;
+                    }
+                }
+
+                return gP;
             }
             catch (Exception)
             {
@@ -307,7 +472,7 @@ namespace ISM6225_Fall_2023_Assignment_2
         Output: 1
         Explanation:
         The first distinct maximum is 3.
-        The second distinct maximum is 2 (both 2's are counted together since they have the same value).
+        The second distinct maximum is 2 (both 2'stk are counted together since they have the same value).
         The third distinct maximum is 1.
         Constraints:
 
@@ -321,8 +486,35 @@ namespace ISM6225_Fall_2023_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 0;
+                long first = long.MinValue;
+                long second = long.MinValue;
+                long third = long.MinValue;
+
+                foreach (int num in nums)
+                {
+                    if (num > first)
+                    {
+                        third = second;
+                        second = first;
+                        first = num;
+                    }
+                    else if (num < first && num > second)
+                    {
+                        third = second;
+                        second = num;
+                    }
+                    else if (num < second && num > third)
+                    {
+                        third = num;
+                    }
+                }
+
+                if (third == long.MinValue)
+                {
+                    return (int)first;
+                }
+
+                return (int)third;
             }
             catch (Exception)
             {
@@ -354,8 +546,20 @@ namespace ISM6225_Fall_2023_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return new List<string>() { };
+                List<string> pstatets = new List<string>();
+
+                for (int i = 0; i < currentState.Length - 1; i++)
+                {
+                    if (currentState[i] == '+' && currentState[i + 1] == '+')
+                    {
+                        char[] newState = currentState.ToCharArray();
+                        newState[i] = '-';
+                        newState[i + 1] = '-';
+                        pstatets.Add(new string(newState));
+                    }
+                }
+
+                return pstatets;
             }
             catch (Exception)
             {
@@ -367,24 +571,42 @@ namespace ISM6225_Fall_2023_Assignment_2
 
         Question 8:
 
-        Given a string s, remove the vowels 'a', 'e', 'i', 'o', and 'u' from it, and return the new string.
+        Given a string stk, remove the vowels 'a', 'e', 'i', 'o', and 'u' from it, and return the new string.
         Example 1:
 
-        Input: s = "leetcodeisacommunityforcoders"
+        Input: stk = "leetcodeisacommunityforcoders"
         Output: "ltcdscmmntyfrcdrs"
 
         Example 2:
 
-        Input: s = "aeiou"
+        Input: stk = "aeiou"
         Output: ""
 
         Timecomplexity:O(n), Space complexity:O(n)
         */
 
-        public static string RemoveVowels(string s)
+        public static string RemoveVowels(string stk)
         {
-            // Write your code here and you can modify the return value according to the requirements
-            return "";
+            try
+            {
+                // Create a StringBuilder to build the resulting string
+                StringBuilder result = new StringBuilder();
+
+                foreach (char ch in stk)
+                {
+                    // Check if the character is not a vowel, and if so, append it to the result
+                    if (ch != 'a' && ch != 'e' && ch != 'i' && ch != 'o' && ch != 'u')
+                    {
+                        result.Append(ch);
+                    }
+                }
+
+                return result.ToString();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         /* Inbuilt Functions - Don't Change the below functions */
@@ -399,7 +621,7 @@ namespace ISM6225_Fall_2023_Assignment_2
                 IList<int> innerList = input[i];
                 sb.Append("[" + string.Join(",", innerList) + "]");
 
-                // Add a comma unless it's the last inner list
+                // Add a comma unless it'stk the last inner list
                 if (i < input.Count - 1)
                 {
                     sb.Append(",");
