@@ -3,7 +3,6 @@
 YOU ARE NOT ALLOWED TO MODIFY ANY FUNCTION DEFINATION's PROVIDED.
 WRITE YOUR CODE IN THE RESPECTIVE QUESTION FUNCTION BLOCK
 
-
 */
 
 using System;
@@ -130,25 +129,30 @@ namespace ISM6225_Fall_2023_Assignment_2
 
             try
             {
+                // If the input array is empty, the entire range from lower to upper is a missing range.
                 if (n == 0)
                 {
                     ans.Add(new List<int> { lower, upper });
                     return ans;
                 }
-
+                // If the first number in the array is greater than the lower bound,
+                // add a missing range from lower to one less than the first element in the array.
                 if (nums[0] > lower)
                 {
                     ans.Add(new List<int> { lower, nums[0] - 1 });
                 }
-
+                // Iterate through the array to find missing ranges between consecutive elements.
                 for (int i = 1; i < n; i++)
                 {
                     if (nums[i] - nums[i - 1] > 1)
                     {
+                        // If the difference between the current and previous elements is greater than 1,
+                        // there is a missing range between them. Add it to the result.
                         ans.Add(new List<int> { nums[i - 1] + 1, nums[i] - 1 });
                     }
                 }
-
+                // If the last number in the array is less than the upper bound,
+                // add a missing range from one more than the last element in the array to the upper bound.
                 if (nums[n - 1] < upper)
                 {
                     ans.Add(new List<int> { nums[n - 1] + 1, upper });
@@ -156,11 +160,17 @@ namespace ISM6225_Fall_2023_Assignment_2
             }
             catch (Exception ex)
             {
+                // If an exception occurs, print an error message.
                 Console.WriteLine("An error occurred: " + ex.Message);
             }
-
+            // Return the list of missing ranges.
             return ans;
         }
+        /* Self Reflection Q01: The code presents a robust approach for addressing the task of 
+           identifying and reporting missing ranges within a given numeric interval. 
+           This functionality can prove particularly valuable in various applications, such as 
+           data analysis or the parsing of log data, where detecting and documenting gaps or 
+           missing values is essential. */
 
         // Helper function to add a range to the "missingRanges" list
         private static void AddRange(IList<IList<int>> missingRanges, long start, long end)
@@ -230,6 +240,7 @@ namespace ISM6225_Fall_2023_Assignment_2
 
                 foreach (char c in stk)
                 {
+                    // Check if the character is an open bracket and push it onto the stack
                     if (c == '(' || c == '[' || c == '{')
                     {
                         stk.Push(c);
@@ -243,6 +254,8 @@ namespace ISM6225_Fall_2023_Assignment_2
 
                         char openBracket = stk.Pop();
 
+
+                        // Check if the closing bracket matches the last open bracket
                         if (c == ')' && openBracket != '(')
                         {
                             return false; // Mismatched parentheses
@@ -266,6 +279,18 @@ namespace ISM6225_Fall_2023_Assignment_2
                 return false; // In case of an exception, consider it as invalid parentheses
             }
         }
+
+        /* Self Reflection: code checks the validity of a string containing brackets (such as parentheses,
+           square brackets, and curly braces) using a stack data structure to identify unmatched 
+           or mismatched brackets. It effectively handles scenarios where it encounters unpaired 
+           closing brackets, detects mismatched pairs, and validates correctly matched brackets. 
+           While the code incorporates a try-catch approach for error handling, which is useful 
+           for exceptions, it might benefit from an error-handling mechanism specifically tailored
+           to this task rather than relying on exceptions. To enhance readability and maintainability,
+           it could be further optimized by employing a dictionary to map opening and closing brackets.
+           This code is fundamental for tasks like syntax checking, ensuring balanced expressions, and 
+           finds applications in parsing and evaluating mathematical expressions, programming language 
+           syntax verification, and validation of configuration files. */
 
         /*
 
@@ -321,7 +346,15 @@ namespace ISM6225_Fall_2023_Assignment_2
                 throw;
             }
         }
-
+        /*Self Reflection: The code effectively calculates the highest possible profit achievable through 
+           stock trading, incorporating input validation and systematic updates of variables 
+           to monitor the lowest price and maximum profit. It follows coding best practices by 
+           using Math.Max and Math.Min for code simplicity. However, the try-catch block designed 
+           for handling exceptions appears unnecessary, as the code does not generate anticipated 
+           exceptions, rendering it redundant. This code is well-structured and suitable for 
+           applications in financial analysis, algorithmic trading, or any scenario requiring 
+           profit maximization when working with historical or real-time price data. */
+                    
         /*
         
         Question 4:
@@ -360,10 +393,10 @@ namespace ISM6225_Fall_2023_Assignment_2
                 {'8', '8'},
                 {'9', '6'}
             };
-
+                // Initialize two pointers, one at the left end and one at the right end of the string.
                 int left = 0;
                 int right = stk.Length - 1;
-
+                // Continue checking until the left pointer is less than or equal to the right pointer.
                 while (left <= right)
                 {
                     // Check if the characters at the left and right positions are a valid strobogrammatic pair
@@ -382,9 +415,15 @@ namespace ISM6225_Fall_2023_Assignment_2
             catch (Exception ex)
             {
                 Console.WriteLine("An error occurred: " + ex.Message);
-                throw;
+                throw; // In case of an exception, catch and rethrow it.
             }
         }
+
+        /* Self Reflection: The code is effective in verifying strobogrammatic strings and includes error handling
+           using a try-catch block for exceptions, even though strobogrammatic checks typically 
+           don't involve exceptions. The code is well-structured and is suitable for tasks 
+           involving string validation, such as in software applications where checking for 
+           strobogrammatic strings is necessary, such as in numerical and text displays. */
 
         /*
 
@@ -428,22 +467,32 @@ namespace ISM6225_Fall_2023_Assignment_2
                     // If the number exists in the dictionary, increment the count
                     if (countMap.ContainsKey(n))
                     {
-                        gP += countMap[n];
-                        countMap[n]++;
+                        gP += countMap[n]; // Increment goodPairs by the count of the same number
+                        countMap[n]++; // Increment the count for the number in the dictionary
                     }
                     else
                     {
-                        countMap[n] = 1;
+                        countMap[n] = 1; // Initialize the count for a new number in the dictionary
                     }
                 }
 
-                return gP;
+                return gP; // Return the count of good pairs
             }
             catch (Exception)
             {
                 throw;
             }
         }
+        /* Self Reflection: The provided solution effectively calculates the count of identical pairs within an 
+           array of integers, taking into account the presence of repeated values as potential 
+           pairs. It utilizes a dictionary to efficiently store and manage the count of each 
+           number, making it easy to perform quick lookups and update counts. The use of clear 
+           variable initialization and a well-named variable, 'goodPairs,' demonstrates adherence 
+           to good programming practices. However, the inclusion of a try-catch block seems 
+           redundant, as the solution is unlikely to generate expected exceptions. In summary, 
+           this solution is well-structured and finds application in scenarios involving the 
+           counting of duplicate elements, such as data analysis or the optimization of processes
+           reliant on the identification of repeated values as pairs. */
 
         /*
         Question 6
@@ -486,34 +535,40 @@ namespace ISM6225_Fall_2023_Assignment_2
         {
             try
             {
+                // Initialize three variables to keep track of the top three maximum values.
                 long first = long.MinValue;
                 long second = long.MinValue;
                 long third = long.MinValue;
 
                 foreach (int num in nums)
                 {
+                    // Compare the current number to the first, second, and third maximum values.
                     if (num > first)
                     {
+                        // If the current number is greater than the first maximum, update the top three values accordingly.
                         third = second;
                         second = first;
                         first = num;
                     }
                     else if (num < first && num > second)
                     {
+                        // If the current number is between the first and second maximum, update the second and third values.
                         third = second;
                         second = num;
                     }
                     else if (num < second && num > third)
                     {
+                        // If the current number is between the second and third maximum, update the third value.
                         third = num;
                     }
                 }
 
                 if (third == long.MinValue)
                 {
+                    // If there is no third maximum, return the first maximum.
                     return (int)first;
                 }
-
+                // Return the third maximum value as an integer.
                 return (int)third;
             }
             catch (Exception)
@@ -521,6 +576,13 @@ namespace ISM6225_Fall_2023_Assignment_2
                 throw;
             }
         }
+        /* Self Reflection: The provided solution effectively determines the third maximum value within an array
+           of integers. It employs three variables to track the top three maximum values, adjusting 
+           them as the array is traversed. The code demonstrates sound practices through well-named
+           variables and logically structured conditions for comparisons. Nevertheless, the 
+           inclusion of a try-catch block seems redundant since the code is improbable to generate
+           anticipated exceptions. In summary, this solution is well-organized and suitable for 
+           scenarios where the task involves finding the third highest value within a dataset. */
 
         /*
         
@@ -546,12 +608,16 @@ namespace ISM6225_Fall_2023_Assignment_2
         {
             try
             {
+                // Initialize a list to store possible next states.
                 List<string> pstatets = new List<string>();
 
+                // Iterate through the current state to find valid moves.
                 for (int i = 0; i < currentState.Length - 1; i++)
                 {
+                    // Check for the presence of "++" in the current state.
                     if (currentState[i] == '+' && currentState[i + 1] == '+')
                     {
+                        // Create a new state by flipping the "++" to "--."
                         char[] newState = currentState.ToCharArray();
                         newState[i] = '-';
                         newState[i + 1] = '-';
@@ -559,13 +625,20 @@ namespace ISM6225_Fall_2023_Assignment_2
                     }
                 }
 
-                return pstatets;
+                return pstatets; // Return the list of possible next states.
             }
             catch (Exception)
             {
-                throw;
+                throw; // Include a catch block for exceptions, although they are not expected in this context.
             }
         }
+        /* Self reflection:  The provided solution efficiently determines and creates possible next states based 
+           on a given input state, primarily focused on replacing "++" with "--." The code is 
+           well-organized and uses clear variable names. However, the inclusion of a try-catch 
+           block seems unnecessary since it is unlikely to generate anticipated exceptions. 
+           This solution is suitable for scenarios that require the identification of potential 
+           moves or transitions between different states, which can be found in various contexts,
+           including game development, puzzle solving, or state space exploration in search algorithms. */
 
         /*
 
@@ -597,15 +670,15 @@ namespace ISM6225_Fall_2023_Assignment_2
                     // Check if the character is not a vowel, and if so, append it to the result
                     if (ch != 'a' && ch != 'e' && ch != 'i' && ch != 'o' && ch != 'u')
                     {
-                        result.Append(ch);
+                        result.Append(ch); // Append non-vowel characters to the result
                     }
                 }
 
-                return result.ToString();
+                return result.ToString(); // Append non-vowel characters to the result
             }
             catch (Exception)
             {
-                throw;
+                throw; // Include a catch block for exceptions, although they are unlikely in this context.
             }
         }
 
@@ -621,7 +694,7 @@ namespace ISM6225_Fall_2023_Assignment_2
                 IList<int> innerList = input[i];
                 sb.Append("[" + string.Join(",", innerList) + "]");
 
-                // Add a comma unless it'stk the last inner list
+                // Add a comma unless it' stk the last inner list
                 if (i < input.Count - 1)
                 {
                     sb.Append(",");
@@ -649,5 +722,12 @@ namespace ISM6225_Fall_2023_Assignment_2
 
             return result;
         }
+        /* Self reflection: This solution effectively removes vowels from a provided string by using a StringBuilder to assemble 
+           the resulting string. It employs clear variable naming and a concise loop for character 
+           examination, adhering to best programming practices. However, the inclusion of a try-catch 
+           block appears unnecessary since the code is unlikely to encounter expected exceptions. 
+           This well-structured code is well-suited for tasks involving text manipulation, specifically 
+           for eliminating specific characters like vowels. It proves valuable in applications requiring 
+           text processing, such as natural language processing and text transformation tasks. */
     }
 }
